@@ -1,0 +1,27 @@
+{
+  "name": "bar-chart-component",
+  "version": "0.1",
+  "homepage": "https://github.com/GDGMonterrey/BarChart-Polymer",
+  "authors": [
+    "Joel Humberto Gómez Paredes <elmaildeldezkareid@gmail.com>"
+  ],
+  "description": "Bar chart component using polymer and d3",
+  "main": "index.html",
+  "moduleType": [],
+  "keywords": [
+    "bar",
+    "chart",
+    "polymer",
+    "d3",
+    "graphic",
+    "component"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
