@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="import" href="../bower_components/polymer/polymer.html">
+  <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+</head>
+
+<dom-module id="bar-chart" attributes="idbar width height data color xvalname yvalname">
+  <template>
+    <div id="{{idbar}}" style="font: 11px sans-serif;"></div>
+  </template>
+<script>
+  Polymer({
+    is: "bar-chart",
+    properties: {
+      idbar: {
+        type: String,
+        value: "bar"
+      },
+      width: {
+        type: Number,
+        value: 500
+      },
+      height: {
+        type: Number,
+        value: 500
+      },
+      data: {
+        type: Array,
+        value: [ 
+          {state: "Nuevo León", value: 3.0},
+          {state: "DF", value: 41.0},
+          {state: "Veracruz", value: 37.0}
+        ]
+      },
+      color: {
+        type: String,
+        value: "#fff798"
+      },
+      xvalname: {
+        type: String,
+        value: "state"
+      },
+      yvalname: {
+        type: String,
+        value: "value"
+      },
+    },
+    ready: function (e) {
+      var margin = {top: 20, right: 20, bottom: 70, left: 40},
+      widthG = this.width - margin.left - margin.right,
+      heightG = this.height - margin.top - margin.bottom;
+
+      var x = d3.scale.ordinal().rangeRoundBands([0, widthG],.05);
+
+      var y = d3.scale.linear().range([ 0, heightG]);
+
+      var xvalname = this.xvalname;
+      var yvalname = this.yvalname;
+      x.domain(this.data.map(function(d) {console.log(d); return d[xvalname]; }));
+      y.domain([0, d3.max(this.data, function(d) { return d[yvalname]; })]);
+
+
+      var verticalScale = d3.scale.linear()
+        .domain([0, d3.max(this.data, function(d) { return d[yvalname]; })])
+        .range([heightG, 0]);
+
+
+      var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+      var yAxis = d3.svg.axis()
+        .scale(verticalScale)
+        .orient("left");
+
+      var svg = d3.select("#"+this.idbar).append("svg")
+        .attr("width", widthG + margin.left + margin.right)
+        .attr("height", heightG + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      console.log(svg);
+      svg.append("g")
+        .attr("transform", "translate(0," + heightG + ")")
+        .call(xAxis)
+        .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", "-.55em")
+        .attr("transform", "rotate(-90)" );
+
+      svg.append("g")
+        .call(yAxis)
+          .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end");
+
+      var bars = svg.selectAll("rect")
+        .data(this.data)
+        .enter().append("rect")
+        .style("fill", this.color)
+        .attr("x", function(d) { return x(d[xvalname]); })
+        .attr("width", x.rangeBand())
+        .attr("height", 0)
+        .attr("y", heightG);
+  
+      bars.transition()
+        .attr('height', function (d) {
+          return y(d[yvalname]);
+        })
+        .attr('y', function (d) {
+          return heightG - y(d[yvalname]);
+        })
+        .delay(function (data, i) {
+          return i * 20;
+        })
+        .duration(2000)
+        .ease('elastic'); 
+    }
+  });
+</script>
+</dom-module>
